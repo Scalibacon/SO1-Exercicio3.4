@@ -1,22 +1,46 @@
 package controller;
 
+import java.util.concurrent.Semaphore;
+
 import javax.swing.JOptionPane;
 
 public class Transacoes extends Thread{
-	private static boolean sacando = false;
-	private static boolean depositando = false;
 	private int codTransacao;
 	private double valor;
-	private int idConta;	
+	private int idConta;
 	
-	public Transacoes(int codTransacao, double valor, int idConta) {
+	public Semaphore semaforoSaque;
+	public Semaphore semaforoDeposito;
+	
+	public Transacoes(int codTransacao, double valor, int idConta,Semaphore semaforoSaque, Semaphore semaforoDeposito) {
 		this.codTransacao = codTransacao;
 		this.valor = valor;
 		this.idConta = idConta;
+		this.semaforoSaque = semaforoSaque;
+		this.semaforoDeposito = semaforoDeposito;
 	}
 	
 	public void run() {
-		
+		if(codTransacao == 1) {
+			try {
+				semaforoSaque.acquire();
+				sacar();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				semaforoSaque.release();
+			}
+		} else
+		if(codTransacao == 2) {
+			try {
+				semaforoDeposito.acquire();
+				depositar();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				semaforoDeposito.release();
+			}
+		}
 	}
 	
 	public void sacar() {
@@ -26,12 +50,14 @@ public class Transacoes extends Thread{
 			System.out.println("Saldo insuficiente para o saque de R$" + valor + " (Conta " + idConta + ")");
 		}else {
 			conta.alteraSaldo(-valor);
+			System.out.println("R$" + valor + " sacados com sucesso da conta #" + idConta + "\nValor atual: R$" + conta.getSaldo());
 		}
 	}
 	
 	public void depositar() {
 		Conta conta = identificarConta();
 		conta.alteraSaldo(valor);
+		System.out.println("R$" + valor + " depositados com sucesso na conta #" + idConta + "\nValor atual: R$" + conta.getSaldo());
 	}
 	
 	public Conta identificarConta() {
