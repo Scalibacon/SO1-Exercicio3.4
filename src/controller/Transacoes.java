@@ -47,17 +47,17 @@ public class Transacoes extends Thread{
 		Conta conta = identificarConta();
 		
 		if(conta.getSaldo() < valor) {
-			System.out.println("Saldo insuficiente para o saque de R$" + valor + " (Conta " + idConta + ")");
+			System.out.println("Saldo insuficiente para o saque de R$" + valor + " (Conta #" + idConta + ")\n");
 		}else {
 			conta.alteraSaldo(-valor);
-			System.out.println("R$" + valor + " sacados com sucesso da conta #" + idConta + "\nValor atual: R$" + conta.getSaldo());
+			System.out.println("R$" + valor + " sacados com sucesso da Conta #" + idConta + "\nValor atual: R$" + conta.getSaldo()+"\n");
 		}
 	}
 	
 	public void depositar() {
 		Conta conta = identificarConta();
 		conta.alteraSaldo(valor);
-		System.out.println("R$" + valor + " depositados com sucesso na conta #" + idConta + "\nValor atual: R$" + conta.getSaldo());
+		System.out.println("R$" + valor + " depositados com sucesso na Conta #" + idConta + "\nValor atual: R$" + conta.getSaldo()+"\n");
 	}
 	
 	public Conta identificarConta() {
